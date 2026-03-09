@@ -1,0 +1,121 @@
+<div class="form-card">
+
+  <div class="form-header">
+    <h2>New Land Record</h2>
+    <span class="form-header-meta">Fill all fields and assign an owner to register</span>
+  </div>
+
+  <div class="form-body">
+
+    <!-- OWNER -->
+    <div class="owner-section">
+      <div class="section-eyebrow">Owner</div>
+      <div class="owner-controls">
+        <div class="owner-select-group">
+          <label class="field-label">Select Existing Owner</label>
+          <select [(ngModel)]="land.ownerId" (change)="onOwnerSelect(land.ownerId!)">
+            <option [ngValue]="undefined">Select owner...</option>
+            <option *ngFor="let owner of owners" [ngValue]="owner.ownerId">
+              {{ owner.name }} — {{ owner.contactNo }}
+            </option>
+          </select>
+        </div>
+        <span class="or-text">or</span>
+        <button class="add-owner-btn" (click)="openOwnerModal()">
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/>
+          </svg>
+          New owner
+        </button>
+      </div>
+      <div class="owner-badge selected" *ngIf="land.ownerId">
+        <span class="owner-badge-dot"></span>{{ getSelectedOwnerName() }}
+      </div>
+      <div class="owner-badge new" *ngIf="!land.ownerId && land.owner">
+        <span class="owner-badge-dot"></span>{{ land.owner.name }}
+      </div>
+    </div>
+
+    <!-- FIELDS -->
+    <div class="grid">
+      <div class="form-group">
+        <label class="field-label">Gaata Number</label>
+        <input type="text" [(ngModel)]="land.gaataNumber" placeholder="e.g. 1234">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Location Address</label>
+        <input type="text" [(ngModel)]="land.locationAddress" placeholder="e.g. Sector 12, Noida">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Length (sqft)</label>
+        <input type="number" [(ngModel)]="land.lengthInSqft" (input)="calculate()" min="0">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Width (sqft)</label>
+        <input type="number" [(ngModel)]="land.widthInSqft" (input)="calculate()" min="0">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Rate per sqft (₹)</label>
+        <input type="number" [(ngModel)]="land.purchaseRatePerSqft" (input)="calculate()" min="0">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Paid Amount (₹)</label>
+        <input type="number" [(ngModel)]="land.paidAmount" (input)="calculate()" min="0">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Contract Start Date</label>
+        <input type="date" [(ngModel)]="land.contractStartDate">
+      </div>
+      <div class="form-group">
+        <label class="field-label">Contract End Date</label>
+        <input type="date" [(ngModel)]="land.contractEndDate">
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary">
+      <div class="summary-box total">
+        <span class="summary-label">Total Cost</span>
+        <span class="summary-value">₹{{ land.totalCost | number:'1.0-0' }}</span>
+      </div>
+      <div class="summary-box balance">
+        <span class="summary-label">Balance Due</span>
+        <span class="summary-value">₹{{ land.balanceAmount | number:'1.0-0' }}</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="action-section">
+  <button class="save-btn"
+          [disabled]="!(land.ownerId && land.ownerId > 0) && !land.owner"
+          (click)="save()">
+    <svg viewBox="0 0 16 16"><path d="M13.5 4.5L6 12 2.5 8.5"/></svg>
+    Save Record
+  </button>
+</div>
+
+<!-- OWNER MODAL -->
+<div *ngIf="showOwnerModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Register New Owner</h3>
+      <p>Owner will be saved with this land record</p>
+    </div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Full Name</label>
+        <input type="text" [(ngModel)]="newOwner.name" placeholder="Full name"></div>
+      <div class="field-group"><label class="field-label">Contact Number</label>
+        <input type="text" [(ngModel)]="newOwner.contactNo" placeholder="10-digit number"></div>
+      <div class="field-group"><label class="field-label">Address</label>
+        <input type="text" [(ngModel)]="newOwner.address" placeholder="City / area"></div>
+      <div class="field-group"><label class="field-label">Aadhar Number</label>
+        <input type="text" [(ngModel)]="newOwner.aadharNo" placeholder="12-digit number"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-confirm" (click)="attachNewOwner()">Confirm</button>
+      <button class="modal-cancel" (click)="closeOwnerModal()">Cancel</button>
+    </div>
+  </div>
+</div>

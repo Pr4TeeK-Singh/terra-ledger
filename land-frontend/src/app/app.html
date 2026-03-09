@@ -1,0 +1,10 @@
+<div class="navbar">
+  <div class="navbar-icon">🏡</div>
+  <span class="navbar-title">Land Management System</span>
+  <span class="navbar-subtitle">Property Registry</span>
+</div>
+
+<div class="container">
+  <app-land-form (landSaved)="refreshList()"></app-land-form>
+  <app-land-list #landList></app-land-list>
+</div>

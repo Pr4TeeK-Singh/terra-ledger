@@ -1,0 +1,117 @@
+<div class="list-card">
+
+  <div class="list-header">
+    <h2>Land Records</h2>
+    <span class="record-badge">{{ lands.length }} entries</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Gaata</th>
+          <th>Location</th>
+          <th>Length</th>
+          <th>Width</th>
+          <th>Rate / sqft</th>
+          <th>Total Cost</th>
+          <th>Paid</th>
+          <th>Balance</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Owner</th>
+          <th>Contact</th>
+          <th>Address</th>
+          <th>Aadhar</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr *ngIf="lands.length === 0">
+          <td colspan="15">
+            <div class="empty-state">
+              <strong>No records found</strong>
+              <p>Add a land record using the form above</p>
+            </div>
+          </td>
+        </tr>
+
+        <ng-container *ngFor="let land of lands">
+
+          <!-- LAND ROW -->
+          <tr (click)="selectLand(land)"
+              class="land-row"
+              [class.is-editing]="editingLandId === land.landId"
+              [class.is-selected]="selectedLand?.landId === land.landId">
+
+            <td>
+              <input *ngIf="editingLandId===land.landId" [(ngModel)]="land.gaataNumber" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-mono">{{ land.gaataNumber }}</span>
+            </td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" [(ngModel)]="land.locationAddress" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId">{{ land.locationAddress }}</span>
+            </td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" type="number" [(ngModel)]="land.lengthInSqft" (input)="calculate(land)" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-muted">{{ land.lengthInSqft }}</span>
+            </td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" type="number" [(ngModel)]="land.widthInSqft" (input)="calculate(land)" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-muted">{{ land.widthInSqft }}</span>
+            </td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" type="number" [(ngModel)]="land.purchaseRatePerSqft" (input)="calculate(land)" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-muted">{{ land.purchaseRatePerSqft }}</span>
+            </td>
+            <td class="cell-mono">{{ land.totalCost | currency:'INR':'symbol':'1.0-0' }}</td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" type="number" [(ngModel)]="land.paidAmount" (input)="calculate(land)" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-mono">{{ land.paidAmount | currency:'INR':'symbol':'1.0-0' }}</span>
+            </td>
+            <td class="cell-balance">{{ land.balanceAmount | currency:'INR':'symbol':'1.0-0' }}</td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" type="date" [(ngModel)]="land.contractStartDate" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-muted">{{ land.contractStartDate | date:'dd MMM yyyy' }}</span>
+            </td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" type="date" [(ngModel)]="land.contractEndDate" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-muted">{{ land.contractEndDate | date:'dd MMM yyyy' }}</span>
+            </td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" [(ngModel)]="land.owner!.name" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="owner-pill">{{ land.owner?.name }}</span>
+            </td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" [(ngModel)]="land.owner!.contactNo" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-muted">{{ land.owner?.contactNo }}</span>
+            </td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" [(ngModel)]="land.owner!.address" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-muted">{{ land.owner?.address }}</span>
+            </td>
+            <td>
+              <input *ngIf="editingLandId===land.landId" [(ngModel)]="land.owner!.aadharNo" (click)="$event.stopPropagation()">
+              <span *ngIf="editingLandId!==land.landId" class="cell-muted">{{ land.owner?.aadharNo }}</span>
+            </td>
+            <td>
+              <button *ngIf="editingLandId!==land.landId" class="btn-edit" (click)="editLand(land, $event)">Edit</button>
+              <button *ngIf="editingLandId===land.landId" class="btn-save" (click)="saveLand(land, $event)">Save</button>
+              <button *ngIf="editingLandId===land.landId" class="btn-cancel" (click)="cancelEdit($event)">Cancel</button>
+            </td>
+
+          </tr>
+
+          <!-- INLINE PLOT PANEL -->
+          <tr *ngIf="selectedLand?.landId === land.landId" class="panel-row">
+            <td colspan="15">
+              <app-plot-panel [land]="land"></app-plot-panel>
+            </td>
+          </tr>
+
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,258 @@
+<div class="panel-wrap">
+
+  <!-- ── PANEL HEADER ── -->
+  <div class="panel-header">
+    <div class="panel-title-group">
+      <span class="panel-eyebrow">Land — Gaata {{ land.gaataNumber }}</span>
+      <h3 class="panel-title">Plot Management</h3>
+    </div>
+    <div class="area-stats">
+      <div class="area-stat">
+        <span class="area-label">Total Area</span>
+        <span class="area-value">{{ totalArea | number:'1.0-0' }} sqft</span>
+      </div>
+      <div class="area-divider"></div>
+      <div class="area-stat">
+        <span class="area-label">Used</span>
+        <span class="area-value used">{{ usedArea | number:'1.0-0' }} sqft</span>
+      </div>
+      <div class="area-divider"></div>
+      <div class="area-stat">
+        <span class="area-label">Remaining</span>
+        <span class="area-value remaining">{{ remainingArea | number:'1.0-0' }} sqft</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADD PLOT FORM ── -->
+  <div class="plot-form-card">
+    <div class="form-section-label">New Plot</div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+        <label class="field-label">Plot No.</label>
+        <input type="text" [(ngModel)]="newPlot.plotNo" placeholder="e.g. P-01">
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Length (sqft)</label>
+        <input type="number" [(ngModel)]="newPlot.landLength" (input)="calculate()" min="0">
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Width (sqft)</label>
+        <input type="number" [(ngModel)]="newPlot.landWidth" (input)="calculate()" min="0">
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Sell Rate (₹/sqft)</label>
+        <input type="number" [(ngModel)]="newPlot.sellRate" (input)="calculate()" min="0">
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">Status</label>
+        <select [(ngModel)]="newPlot.status">
+          <option value="AVAILABLE">Available</option>
+          <option value="SOLD">Sold</option>
+          <option value="RESERVED">Reserved</option>
+        </select>
+      </div>
+
+      <div class="form-group total-box">
+        <span class="total-label">Total Amount</span>
+        <span class="total-value">₹{{ newPlot.totalAmount | number:'1.0-0' }}</span>
+      </div>
+
+    </div>
+
+    <!-- SELLER -->
+    <div class="owner-row">
+      <div class="owner-col">
+        <label class="field-label">Seller</label>
+        <div class="owner-controls">
+          <select [(ngModel)]="newPlot.sellerId" (change)="onSellerSelect(newPlot.sellerId!)">
+            <option [ngValue]="undefined">Select seller...</option>
+            <option *ngFor="let s of sellers" [ngValue]="s.sellerId">{{ s.name }} — {{ s.contactNo }}</option>
+          </select>
+          <span class="or-text">or</span>
+          <button class="add-owner-btn" (click)="openSellerModal()">+ New</button>
+        </div>
+        <div class="owner-badge new" *ngIf="!newPlot.sellerId && newPlot.seller">
+          <span class="badge-dot"></span>{{ newPlot.seller.name }}
+        </div>
+      </div>
+
+      <!-- BROKER -->
+      <div class="owner-col">
+        <label class="field-label">Broker</label>
+        <div class="owner-controls">
+          <select [(ngModel)]="newPlot.brokerId" (change)="onBrokerSelect(newPlot.brokerId!)">
+            <option [ngValue]="undefined">Select broker...</option>
+            <option *ngFor="let b of brokers" [ngValue]="b.brokerId">{{ b.name }} — {{ b.contactNo }}</option>
+          </select>
+          <span class="or-text">or</span>
+          <button class="add-owner-btn" (click)="openBrokerModal()">+ New</button>
+        </div>
+        <div class="owner-badge new" *ngIf="!newPlot.brokerId && newPlot.broker">
+          <span class="badge-dot"></span>{{ newPlot.broker.name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="save-btn" (click)="save()">
+        <svg viewBox="0 0 16 16"><path d="M13.5 4.5L6 12 2.5 8.5"/></svg>
+        Add Plot
+      </button>
+    </div>
+  </div>
+
+  <!-- ── PLOTS TABLE ── -->
+  <div class="plots-table-card">
+    <div class="table-header">
+      <span class="table-title">Plots <span class="record-badge">{{ plots.length }}</span></span>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Plot No.</th>
+            <th>Length</th>
+            <th>Width</th>
+            <th>Rate/sqft</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Seller</th>
+            <th>Broker</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="plots.length === 0">
+            <td colspan="10">
+              <div class="empty-state">
+                <strong>No plots yet</strong>
+                <p>Use the form above to add the first plot</p>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngFor="let plot of plots; let i = index"
+              [class.is-editing]="editingPlotId === plot.plotId">
+
+            <td class="cell-muted">{{ i + 1 }}</td>
+
+            <td>
+              <input *ngIf="editingPlotId===plot.plotId" [(ngModel)]="plot.plotNo">
+              <span *ngIf="editingPlotId!==plot.plotId" class="cell-mono">{{ plot.plotNo }}</span>
+            </td>
+
+            <td>
+              <input *ngIf="editingPlotId===plot.plotId" type="number"
+                     [(ngModel)]="plot.landLength" (input)="calculateEdit(plot)">
+              <span *ngIf="editingPlotId!==plot.plotId" class="cell-muted">{{ plot.landLength }}</span>
+            </td>
+
+            <td>
+              <input *ngIf="editingPlotId===plot.plotId" type="number"
+                     [(ngModel)]="plot.landWidth" (input)="calculateEdit(plot)">
+              <span *ngIf="editingPlotId!==plot.plotId" class="cell-muted">{{ plot.landWidth }}</span>
+            </td>
+
+            <td>
+              <input *ngIf="editingPlotId===plot.plotId" type="number"
+                     [(ngModel)]="plot.sellRate" (input)="calculateEdit(plot)">
+              <span *ngIf="editingPlotId!==plot.plotId" class="cell-muted">{{ plot.sellRate }}</span>
+            </td>
+
+            <td class="cell-mono">₹{{ plot.totalAmount | number:'1.0-0' }}</td>
+
+            <td>
+              <select *ngIf="editingPlotId===plot.plotId" [(ngModel)]="plot.status">
+                <option value="AVAILABLE">Available</option>
+                <option value="SOLD">Sold</option>
+                <option value="RESERVED">Reserved</option>
+              </select>
+              <span *ngIf="editingPlotId!==plot.plotId"
+                    class="status-badge"
+                    [class.available]="plot.status==='AVAILABLE'"
+                    [class.sold]="plot.status==='SOLD'"
+                    [class.reserved]="plot.status==='RESERVED'">
+                {{ plot.status }}
+              </span>
+            </td>
+
+            <td>
+              <span class="owner-pill" *ngIf="plot.seller">{{ plot.seller.name }}</span>
+              <span class="cell-muted" *ngIf="!plot.seller">—</span>
+            </td>
+
+            <td>
+              <span class="owner-pill broker" *ngIf="plot.broker">{{ plot.broker.name }}</span>
+              <span class="cell-muted" *ngIf="!plot.broker">—</span>
+            </td>
+
+            <td>
+              <button *ngIf="editingPlotId!==plot.plotId" class="btn-edit" (click)="editPlot(plot)">Edit</button>
+              <button *ngIf="editingPlotId===plot.plotId" class="btn-save" (click)="savePlot(plot)">Save</button>
+              <button *ngIf="editingPlotId===plot.plotId" class="btn-cancel" (click)="cancelEdit()">Cancel</button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── SELLER MODAL ── -->
+<div *ngIf="showSellerModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>New Seller</h3>
+      <p>Will be saved to owner records</p>
+    </div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Full Name</label>
+        <input type="text" [(ngModel)]="newSeller.name" placeholder="Full name"></div>
+      <div class="field-group"><label class="field-label">Contact No.</label>
+        <input type="text" [(ngModel)]="newSeller.contactNo" placeholder="10-digit number"></div>
+      <div class="field-group"><label class="field-label">Address</label>
+        <input type="text" [(ngModel)]="newSeller.address" placeholder="City / area"></div>
+      <div class="field-group"><label class="field-label">Aadhar No.</label>
+        <input type="text" [(ngModel)]="newSeller.aadharNo" placeholder="12-digit number"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-confirm" (click)="attachSeller()">Confirm</button>
+      <button class="modal-cancel" (click)="closeSellerModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BROKER MODAL ── -->
+<div *ngIf="showBrokerModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>New Broker</h3>
+      <p>Will be saved to owner records</p>
+    </div>
+    <div class="modal-body">
+      <div class="field-group"><label class="field-label">Full Name</label>
+        <input type="text" [(ngModel)]="newBroker.name" placeholder="Full name"></div>
+      <div class="field-group"><label class="field-label">Contact No.</label>
+        <input type="text" [(ngModel)]="newBroker.contactNo" placeholder="10-digit number"></div>
+      <div class="field-group"><label class="field-label">Address</label>
+        <input type="text" [(ngModel)]="newBroker.address" placeholder="City / area"></div>
+      <div class="field-group"><label class="field-label">Aadhar No.</label>
+        <input type="text" [(ngModel)]="newBroker.aadharNo" placeholder="12-digit number"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-confirm" (click)="attachBroker()">Confirm</button>
+      <button class="modal-cancel" (click)="closeBrokerModal()">Cancel</button>
+    </div>
+  </div>
+</div>
