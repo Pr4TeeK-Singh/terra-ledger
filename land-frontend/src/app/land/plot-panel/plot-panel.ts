@@ -1,7 +1,4 @@
-import {
-  Component, Input, OnInit, OnChanges,
-  SimpleChanges, ChangeDetectorRef, OnDestroy
-} from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -17,14 +14,13 @@ import { PlotService } from '../../services/plot.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './plot-panel.html',
-  styleUrls: ['./plot-panel.css']
+  styleUrl: './plot-panel.css'
 })
 export class PlotPanelComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() land!: Land;
 
   plots: Plot[] = [];
-
   sellers: Seller[] = [];
   brokers: Broker[] = [];
 
@@ -42,10 +38,7 @@ export class PlotPanelComponent implements OnInit, OnChanges, OnDestroy {
   private snapshot: Plot | null = null;
   private sub!: Subscription;
 
-  constructor(
-    private plotService: PlotService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private plotService: PlotService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.sub = this.plotService.refresh$.subscribe(() => this.loadPlots());
@@ -62,8 +55,6 @@ export class PlotPanelComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void { this.sub?.unsubscribe(); }
 
-  // ── DATA ──────────────────────────────────────────
-
   loadPlots(): void {
     if (!this.land?.landId) return;
     this.plotService.getByLandId(this.land.landId!).subscribe({
@@ -76,53 +67,33 @@ export class PlotPanelComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  /**
-   * Extract unique sellers and brokers from loaded plots.
-   * Same pattern as owners extracted from lands — no extra API call.
-   */
   extractSellersAndBrokers(): void {
-    const sellerMap = new Map<number, Seller>();
-    const brokerMap = new Map<number, Broker>();
-
+    const sm = new Map<number, Seller>();
+    const bm = new Map<number, Broker>();
     this.plots.forEach(p => {
-      if (p.seller?.sellerId) sellerMap.set(p.seller.sellerId, p.seller);
-      if (p.broker?.brokerId) brokerMap.set(p.broker.brokerId, p.broker);
+      if (p.seller?.sellerId) sm.set(p.seller.sellerId, p.seller);
+      if (p.broker?.brokerId) bm.set(p.broker.brokerId, p.broker);
     });
-
-    this.sellers = Array.from(sellerMap.values());
-    this.brokers  = Array.from(brokerMap.values());
+    this.sellers = Array.from(sm.values());
+    this.brokers  = Array.from(bm.values());
   }
 
   calcRemaining(): void {
-    this.totalArea = (this.land.lengthInSqft || 0) * (this.land.widthInSqft || 0);
-    this.usedArea  = this.plots.reduce((sum, p) => sum + ((p.landLength as any) * (p.landWidth as any)), 0);
+    this.totalArea     = (this.land.lengthInSqft || 0) * (this.land.widthInSqft || 0);
+    this.usedArea      = this.plots.reduce((s, p) => s + ((p.landLength as any) * (p.landWidth as any)), 0);
     this.remainingArea = this.totalArea - this.usedArea;
   }
 
-  // ── FORM ──────────────────────────────────────────
-
   reset(): void {
     this.newPlot = {
-      gaataNo: this.land?.gaataNumber || '',
-      landId: this.land?.landId || 0,
-      plotNo: '',
-      landLength: 0,
-      landWidth: 0,
-      sellRate: 0,
-      totalAmount: 0,
-      status: 'AVAILABLE',
-      sellerId: undefined,
-      seller: null,
-      brokerId: undefined,
-      broker: null
+      gaataNo: this.land?.gaataNumber || '', landId: this.land?.landId || 0,
+      plotNo: '', landLength: 0, landWidth: 0, sellRate: 0, totalAmount: 0,
+      status: 'AVAILABLE', sellerId: undefined, seller: null, brokerId: undefined, broker: null
     };
   }
 
   calculate(): void {
-    this.newPlot.totalAmount =
-      (this.newPlot.landLength as any || 0) *
-      (this.newPlot.landWidth  as any || 0) *
-      (this.newPlot.sellRate   as any || 0);
+    this.newPlot.totalAmount = (this.newPlot.landLength as any || 0) * (this.newPlot.landWidth as any || 0) * (this.newPlot.sellRate as any || 0);
   }
 
   calculateEdit(plot: Plot): void {
@@ -130,61 +101,34 @@ export class PlotPanelComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   save(): void {
-    const plot = { ...this.newPlot, landId: this.land.landId! };
-    this.plotService.save(plot).subscribe({
-      next: () => {
-        this.reset();
-        this.loadPlots();
-        this.plotService.triggerRefresh();
-      }
+    this.plotService.save({ ...this.newPlot, landId: this.land.landId! }).subscribe({
+      next: () => { this.reset(); this.loadPlots(); this.plotService.triggerRefresh(); }
     });
   }
 
-  // ── EDIT ──────────────────────────────────────────
-
-  editPlot(plot: Plot): void {
-    this.editingPlotId = plot.plotId!;
-    this.snapshot = JSON.parse(JSON.stringify(plot));
-  }
+  editPlot(plot: Plot): void { this.editingPlotId = plot.plotId!; this.snapshot = JSON.parse(JSON.stringify(plot)); }
 
   cancelEdit(): void {
     if (this.snapshot) {
       const idx = this.plots.findIndex(p => p.plotId === this.snapshot!.plotId);
       if (idx > -1) this.plots[idx] = this.snapshot;
     }
-    this.editingPlotId = null;
-    this.snapshot = null;
-    this.cdr.markForCheck();
+    this.editingPlotId = null; this.snapshot = null; this.cdr.markForCheck();
   }
 
   savePlot(plot: Plot): void {
     this.plotService.update(plot).subscribe({
-      next: () => {
-        this.editingPlotId = null;
-        this.snapshot = null;
-        this.loadPlots();
-      }
+      next: () => { this.editingPlotId = null; this.snapshot = null; this.loadPlots(); }
     });
   }
-
-  // ── OWNER MODALS ──────────────────────────────────
 
   openSellerModal(): void  { this.showSellerModal = true; }
   closeSellerModal(): void { this.showSellerModal = false; this.newSeller = this.emptySeller(); }
   openBrokerModal(): void  { this.showBrokerModal = true; }
   closeBrokerModal(): void { this.showBrokerModal = false; this.newBroker = this.emptyBroker(); }
 
-  attachSeller(): void {
-    this.newPlot.sellerId = undefined;
-    this.newPlot.seller   = { ...this.newSeller };
-    this.closeSellerModal();
-  }
-
-  attachBroker(): void {
-    this.newPlot.brokerId = undefined;
-    this.newPlot.broker   = { ...this.newBroker };
-    this.closeBrokerModal();
-  }
+  attachSeller(): void { this.newPlot.sellerId = undefined; this.newPlot.seller = { ...this.newSeller }; this.closeSellerModal(); }
+  attachBroker(): void { this.newPlot.brokerId = undefined; this.newPlot.broker = { ...this.newBroker }; this.closeBrokerModal(); }
 
   onSellerSelect(id: number): void { if (id) this.newPlot.seller = null; }
   onBrokerSelect(id: number): void { if (id) this.newPlot.broker = null; }

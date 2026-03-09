@@ -11,7 +11,7 @@ import { LandService } from '../../services/land.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './land-form.html',
-  styleUrls: ['./land-form.css']
+  styleUrl: './land-form.css'
 })
 export class LandFormComponent implements OnInit {
 
@@ -22,22 +22,15 @@ export class LandFormComponent implements OnInit {
   showOwnerModal = false;
   newOwner: Owner = this.emptyOwner();
 
-  constructor(
-    private landService: LandService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private landService: LandService, private cdr: ChangeDetectorRef) {}
 
-  ngOnInit(): void {
-    this.loadOwnersFromLands();
-  }
+  ngOnInit(): void { this.loadOwnersFromLands(); }
 
   loadOwnersFromLands(): void {
     this.landService.getAllLands().subscribe({
       next: lands => {
         const map = new Map<number, Owner>();
-        lands.forEach(l => {
-          if (l.owner?.ownerId) map.set(l.owner.ownerId, l.owner);
-        });
+        lands.forEach(l => { if (l.owner?.ownerId) map.set(l.owner.ownerId, l.owner); });
         this.owners = Array.from(map.values());
         this.cdr.markForCheck();
       }
@@ -49,13 +42,10 @@ export class LandFormComponent implements OnInit {
     this.land.balanceAmount = this.land.totalCost - (this.land.paidAmount || 0);
   }
 
-  onOwnerSelect(id: number): void {
-    if (id) this.land.owner = null;
-  }
+  onOwnerSelect(id: number): void { if (id) this.land.owner = null; }
 
   getSelectedOwnerName(): string {
-    const o = this.owners.find(o => o.ownerId === this.land.ownerId);
-    return o ? o.name : '';
+    return this.owners.find(o => o.ownerId === this.land.ownerId)?.name || '';
   }
 
   openOwnerModal(): void  { this.showOwnerModal = true; }
@@ -88,7 +78,5 @@ export class LandFormComponent implements OnInit {
     };
   }
 
-  emptyOwner(): Owner {
-    return { name: '', contactNo: '', address: '', aadharNo: '' };
-  }
+  emptyOwner(): Owner { return { name: '', contactNo: '', address: '', aadharNo: '' }; }
 }

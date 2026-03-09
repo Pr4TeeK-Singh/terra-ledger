@@ -1,6 +1,4 @@
-import {
-  Component, OnInit, OnDestroy, ChangeDetectorRef
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -14,7 +12,7 @@ import { PlotPanelComponent } from '../plot-panel/plot-panel';
   standalone: true,
   imports: [CommonModule, FormsModule, PlotPanelComponent],
   templateUrl: './land-list.html',
-  styleUrls: ['./land-list.css']
+  styleUrl: './land-list.css'
 })
 export class LandListComponent implements OnInit, OnDestroy {
 
@@ -24,10 +22,7 @@ export class LandListComponent implements OnInit, OnDestroy {
   private snapshot: Land | null = null;
   private sub!: Subscription;
 
-  constructor(
-    private landService: LandService,
-    private cdr: ChangeDetectorRef
-  ) {}
+  constructor(private landService: LandService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.sub = this.landService.refresh$.subscribe(() => this.loadLands());
@@ -41,8 +36,7 @@ export class LandListComponent implements OnInit, OnDestroy {
       next: lands => {
         this.lands = lands;
         if (this.selectedLand) {
-          const updated = lands.find(l => l.landId === this.selectedLand!.landId);
-          this.selectedLand = updated || null;
+          this.selectedLand = lands.find(l => l.landId === this.selectedLand!.landId) || null;
         }
         this.cdr.markForCheck();
       }
@@ -74,16 +68,12 @@ export class LandListComponent implements OnInit, OnDestroy {
   saveLand(land: Land, event: Event): void {
     event.stopPropagation();
     this.landService.update(land).subscribe({
-      next: () => {
-        this.editingLandId = null;
-        this.snapshot = null;
-        this.loadLands();
-      }
+      next: () => { this.editingLandId = null; this.snapshot = null; this.loadLands(); }
     });
   }
 
   calculate(land: Land): void {
-    land.totalCost    = (land.lengthInSqft || 0) * (land.widthInSqft || 0) * (land.purchaseRatePerSqft || 0);
+    land.totalCost     = (land.lengthInSqft || 0) * (land.widthInSqft || 0) * (land.purchaseRatePerSqft || 0);
     land.balanceAmount = land.totalCost - (land.paidAmount || 0);
   }
 }

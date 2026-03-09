@@ -1,19 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
-import { LandFormComponent } from './land/land-form/land-form';
-import { LandListComponent } from './land/land-list/land-list';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [LandFormComponent, LandListComponent],
-  templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  imports: [RouterOutlet],
+  template: '<router-outlet></router-outlet>'
 })
-export class AppComponent {
-
-  @ViewChild('landList') landList!: LandListComponent;
-
-  refreshList(): void {
-    this.landList?.loadLands();
-  }
-} 
+export class AppComponent {}

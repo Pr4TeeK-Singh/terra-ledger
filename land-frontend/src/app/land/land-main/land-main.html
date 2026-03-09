@@ -1,0 +1,20 @@
+<div class="navbar">
+  <div class="navbar-mark">
+    <svg viewBox="0 0 16 16">
+      <path d="M2 13 L8 3 L14 13"/>
+      <path d="M4.5 9 L11.5 9"/>
+    </svg>
+  </div>
+  <span class="navbar-title">Land Registry</span>
+  <div class="navbar-sep"></div>
+  <span class="navbar-sub">Property Management System</span>
+  <div class="navbar-right">
+    <span class="user-tag">{{ authService.getUsername() }}</span>
+    <button class="logout-btn" (click)="logout()">Sign out</button>
+  </div>
+</div>
+
+<div class="container">
+  <app-land-form (landSaved)="refreshList()"></app-land-form>
+  <app-land-list #landList></app-land-list>
+</div>

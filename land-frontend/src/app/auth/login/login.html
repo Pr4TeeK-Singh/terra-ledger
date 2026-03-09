@@ -1,0 +1,53 @@
+<div class="login-page">
+  <div class="login-card">
+
+    <div class="login-logo">
+      <div class="login-mark">
+        <svg viewBox="0 0 16 16">
+          <path d="M2 13 L8 3 L14 13"/>
+          <path d="M4.5 9 L11.5 9"/>
+        </svg>
+      </div>
+      <h1>Land Registry</h1>
+      <p>Sign in to access the system</p>
+    </div>
+
+    <div class="login-form">
+
+      <div class="error-msg" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+      <div class="field-group">
+        <label class="field-label">Username</label>
+        <div class="input-row">
+          <input class="field-input" type="text"
+                 [(ngModel)]="username"
+                 placeholder="Enter username"
+                 (keyup.enter)="login()">
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Password</label>
+        <div class="input-row">
+          <input class="field-input"
+                 [type]="showPassword ? 'text' : 'password'"
+                 [(ngModel)]="password"
+                 placeholder="Enter password"
+                 (keyup.enter)="login()">
+          <button class="toggle-pw" type="button"
+                  (click)="showPassword = !showPassword">
+            {{ showPassword ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+      </div>
+
+      <button class="login-submit" (click)="login()" [disabled]="loading">
+        <span *ngIf="!loading">Continue</span>
+        <span *ngIf="loading" class="spinner"></span>
+      </button>
+
+      <p class="login-hint">admin / admin123</p>
+
+    </div>
+  </div>
+</div>
