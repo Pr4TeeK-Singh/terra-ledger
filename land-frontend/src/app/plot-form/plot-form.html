@@ -1,0 +1,43 @@
+<div class="pf-grid">
+  <div class="pf-group">
+    <label class="field-label">Plot No.</label>
+    <input type="text" [(ngModel)]="plot.plotNo" placeholder="e.g. A-01">
+  </div>
+  <div class="pf-group">
+    <label class="field-label">Gaata No.</label>
+    <input type="text" [(ngModel)]="plot.gaataNo" placeholder="e.g. 1234">
+  </div>
+  <div class="pf-group">
+    <label class="field-label">Length (sqft)</label>
+    <input type="number" [(ngModel)]="plot.landLength" (input)="calculate()" min="0">
+  </div>
+  <div class="pf-group">
+    <label class="field-label">Width (sqft)</label>
+    <input type="number" [(ngModel)]="plot.landWidth" (input)="calculate()" min="0">
+  </div>
+  <div class="pf-group">
+    <label class="field-label">Sell Rate (₹/sqft)</label>
+    <input type="number" [(ngModel)]="plot.sellRate" (input)="calculate()" min="0">
+  </div>
+  <div class="pf-group">
+    <label class="field-label">Status</label>
+    <select [(ngModel)]="plot.status">
+      <option value="AVAILABLE">Available</option>
+      <option value="SOLD">Sold</option>
+      <option value="RESERVED">Reserved</option>
+    </select>
+  </div>
+  <div class="pf-group">
+    <label class="field-label">Seller Name</label>
+    <input type="text" [(ngModel)]="plot.seller!.name" placeholder="Seller full name">
+  </div>
+  <div class="pf-group">
+    <label class="field-label">Broker Name</label>
+    <input type="text" [(ngModel)]="plot.broker!.name" placeholder="Broker full name">
+  </div>
+</div>
+
+<div class="pf-footer">
+  <span class="pf-total">Total: ₹{{ plot.totalAmount | number:'1.0-0' }}</span>
+  <button class="pf-save" (click)="save()">Save Plot</button>
+</div>

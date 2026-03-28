@@ -11,7 +11,7 @@
 	<groupId>com.landmgmt</groupId>
 	<artifactId>land-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<n>land-backend</n>
+	<name>land-backend</name>
 	<description>Backend for Land Management System</description>
 	<properties>
 		<java.version>25</java.version>

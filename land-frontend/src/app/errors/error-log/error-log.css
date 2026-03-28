@@ -1,0 +1,141 @@
+.el-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  font-family: 'Figtree', sans-serif;
+}
+
+.el-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.el-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex: 1;
+}
+
+.el-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #141210;
+}
+
+.el-count {
+  font-size: 12px;
+  font-weight: 500;
+  color: #A09B96;
+  background: #F6F4F0;
+  border: 1px solid #E4E0DA;
+  border-radius: 20px;
+  padding: 2px 10px;
+}
+
+.el-count.has-errors {
+  color: #B91C1C;
+  background: #FEF2F2;
+  border-color: #FECACA;
+}
+
+.back-btn {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6B6560;
+  background: none;
+  border: 1px solid #E4E0DA;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: 'Figtree', sans-serif;
+}
+
+.back-btn:hover { background: #F6F4F0; }
+
+.clear-btn {
+  font-size: 12px;
+  font-weight: 500;
+  color: #B91C1C;
+  background: none;
+  border: 1px solid #FECACA;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: 'Figtree', sans-serif;
+}
+
+.clear-btn:hover:not(:disabled) { background: #FEF2F2; }
+.clear-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.el-empty {
+  text-align: center;
+  padding: 64px 0;
+  color: #A09B96;
+}
+
+.empty-icon {
+  font-size: 40px;
+  color: #1E5C3A;
+  margin-bottom: 12px;
+}
+
+.el-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.el-item {
+  background: white;
+  border: 1px solid #E4E0DA;
+  border-radius: 10px;
+  padding: 14px 16px;
+  border-left: 3px solid #E4E0DA;
+}
+
+.el-item-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.el-time {
+  margin-left: auto;
+  font-size: 11px;
+  color: #A09B96;
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.badge-http    { background: #EFF6FF; color: #1D4ED8; }
+.badge-runtime { background: #FEF3C7; color: #92400E; }
+.badge-unknown { background: #F6F4F0; color: #6B6560; }
+
+.el-status { font-size: 12px; font-weight: 600; }
+.status-red   { color: #B91C1C; }
+.status-amber { color: #92400E; }
+.status-green { color: #1E5C3A; }
+
+.el-message {
+  font-size: 13px;
+  color: #3D3935;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.el-url {
+  font-size: 11px;
+  color: #A09B96;
+  font-family: monospace;
+}

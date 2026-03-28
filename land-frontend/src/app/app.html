@@ -1,7 +1,3 @@
-<ng-container *ngIf="!authService.isLoggedIn()">
-  <app-login></app-login>
-</ng-container>
-
 <ng-container *ngIf="authService.isLoggedIn()">
   <div class="navbar">
     <div class="navbar-mark">
@@ -14,6 +10,10 @@
     <div class="navbar-sep"></div>
     <span class="navbar-sub">Property Management System</span>
     <div class="navbar-right">
+      <a class="error-link" routerLink="/errors">
+        Errors
+        <span class="error-badge" *ngIf="errorLog.count > 0">{{ errorLog.count }}</span>
+      </a>
       <span class="user-tag">{{ authService.getUsername() }}</span>
       <button class="logout-btn" (click)="logout()">Sign out</button>
     </div>

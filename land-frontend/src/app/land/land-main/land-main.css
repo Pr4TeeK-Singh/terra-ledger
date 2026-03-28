@@ -51,3 +51,34 @@
 .logout-btn:hover {
   background: #dc2626;
 }
+
+.error-link {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B6560;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  transition: all 0.15s;
+  color: rgba(255,255,255,0.75);
+}
+
+.error-link:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.error-badge {
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}

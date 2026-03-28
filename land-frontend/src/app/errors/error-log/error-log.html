@@ -1,0 +1,35 @@
+<div class="el-page">
+
+  <div class="el-header">
+    <button class="back-btn" (click)="back()">← Back</button>
+    <div class="el-title-group">
+      <h1 class="el-title">Error Log</h1>
+      <span class="el-count" [class.has-errors]="errors.length > 0">
+        {{ errors.length }} {{ errors.length === 1 ? 'error' : 'errors' }}
+      </span>
+    </div>
+    <button class="clear-btn" (click)="clear()" [disabled]="errors.length === 0">
+      Clear all
+    </button>
+  </div>
+
+  <div class="el-empty" *ngIf="errors.length === 0">
+    <div class="empty-icon">✓</div>
+    <p>No errors recorded in this session.</p>
+  </div>
+
+  <div class="el-list" *ngIf="errors.length > 0">
+    <div class="el-item" *ngFor="let err of errors">
+      <div class="el-item-top">
+        <span class="badge" [ngClass]="badgeClass(err.type)">{{ err.type }}</span>
+        <span class="el-status" *ngIf="err.status" [ngClass]="statusClass(err.status)">
+          HTTP {{ err.status }}
+        </span>
+        <span class="el-time">{{ err.timestamp | date:'dd MMM yyyy, HH:mm:ss' }}</span>
+      </div>
+      <p class="el-message">{{ err.message }}</p>
+      <p class="el-url" *ngIf="err.url">{{ err.url }}</p>
+    </div>
+  </div>
+
+</div>
