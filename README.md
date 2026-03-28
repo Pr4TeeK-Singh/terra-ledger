@@ -50,14 +50,14 @@ terra-ledger/
 
 ## ⚙️ Tech Stack
 
-| Layer      | Technology                                      |
-|------------|-------------------------------------------------|
-| Backend    | Java 17, Spring Boot 3, JJWT, SpringDoc OpenAPI |
-| Database   | MySQL (raw JDBC via `DataSource`)               |
-| Frontend   | Angular 17+, Standalone Components, AG Grid     |
-| Auth       | JWT (Bearer token), HTTP Interceptor            |
-| Styling    | CSS Variables, Figtree + Cormorant Garamond      |
-| Build      | Maven (backend), Angular CLI (frontend)         |
+| Layer      | Technology                                       |
+|------------|--------------------------------------------------|
+| Backend    | Java 25, Spring Boot 4, JJWT, SpringDoc OpenAPI  |
+| Database   | MySQL 9 (raw JDBC via `DataSource`)              |
+| Frontend   | Angular 21, Standalone Components, AG Grid       |
+| Auth       | JWT (Bearer token), HTTP Interceptor             |
+| Styling    | CSS Variables, Figtree + Cormorant Garamond       |
+| Build      | Maven (backend), Angular CLI (frontend)          |
 
 ---
 
@@ -65,10 +65,10 @@ terra-ledger/
 
 ### Prerequisites
 
-- Java 17+
-- Node.js 18+ & Angular CLI (`npm install -g @angular/cli`)
-- MySQL 8+
-- Maven 3.8+
+- Java 25+
+- Node.js 22+ & Angular CLI (`npm install -g @angular/cli`)
+- MySQL 9+
+- Maven 3.9+
 
 ---
 
